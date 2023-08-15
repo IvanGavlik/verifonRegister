@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class Main {
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        String host = "device_ip_address";
+        String host = args[0];
         int port = 5015;
 
         Random generator = new Random();
