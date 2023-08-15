@@ -2,15 +2,26 @@ package org.example;
 
 import java.io.*;
 import java.net.*;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.util.Random;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchAlgorithmException {
         String host = "device_ip_address";
         int port = 5015;
+
+        Random generator = new Random();
+        String entryCode = String.valueOf(generator.nextInt(9999));
+
+        System.out.println("Entry code " + entryCode);
+
 
         String registrationMessage = "<TRANSACTION>\n" +
                 "  <FUNCTION_TYPE>SECURITY</FUNCTION_TYPE>\n" +
                 "  <COMMAND>REGISTER</COMMAND>\n" +
-                "  <ENTRY_CODE>1</ENTRY_CODE>\n" +
+                "  <ENTRY_CODE>"+ entryCode +"</ENTRY_CODE>\n" +
                 "  <KEY>Your_Public_Key_Here</KEY>\n" +
                 "  <REG_VER>2</REG_VER>\n" +
                 "</TRANSACTION>";
