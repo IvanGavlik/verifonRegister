@@ -54,4 +54,11 @@ public class Terminal {
                 ", lastResponse='" + lastResponse + '\'' +
                 '}';
     }
+
+    public static void main(String[] args) {
+        Terminal t = new Terminal();
+        t.lastResponse = "<MAC_KEY>TiwAfqfmm/TtIH7RTieGiRSMVaRcDdGeMBFErYkRX/twWNQYJvsyK2zY520sGwa4zMC9JARZJ4BVfXiwcmgScQCiukArIPnOmIXEZjHzqKQRTy00lC2lhNLNYoTN5GkisWZkL89yJTDLLaDdAcanYTygzOvbl/OHF1+APHBVMoL1vfk9Eq4tEISIvZlQ9ZxrTMrjhpjhrqHE6QfPsAuS1HtWACm43qwgAmuL+tBuPVHxjrFR70LFe1ZnvIenth5Abwbw/ybMSX45kye5RtCNStZaCUI1BoZWrPHxqBKu3vyFIvnF6+DSO4IlNdQbz3IeRAE0IbC4MScjDVMBNo3FyQ==</MAC_KEY>";
+        t.setMacKey();
+        t.setMacLabel();
+    }
 }

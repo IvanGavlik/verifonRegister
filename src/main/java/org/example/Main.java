@@ -16,12 +16,12 @@ public class Main {
     static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.3");
+        System.out.println("App start version 1.0.5");
         meni();
 
-        Scanner scanner = new Scanner(System.in);
         int i = Integer.MAX_VALUE;
         while ( i != 0) {
+            Scanner scanner = new Scanner(System.in);
             i = scanner.nextInt();
             switch (i) {
                 case 1:
@@ -91,26 +91,14 @@ public class Main {
                 "</TRANSACTION>";
 
         socketSend(host, PORT, macMessage);
+
         debug();
     }
 
-    /**
-     response
-     Response from device: <RESPONSE>
-     Response from device:   <RESPONSE_TEXT>Registered P_VOEGZH</RESPONSE_TEXT>
-     Response from device:   <RESULT>OK</RESULT>
-     Response from device:   <RESULT_CODE>-1</RESULT_CODE>
-     Response from device:   <TERMINATION_STATUS>SUCCESS</TERMINATION_STATUS>
-     Response from device:   <MAC_KEY>bu2qchsiidv3zeNjAt9LC8kUd2KpBPgG9iANnBHLpmZmap0gyoJTqezVkatYNwKMj3BPlFuYGYwjyleRaHqe6HEZ2VAuKl/JoTVRcu57Wcq5ouEYi5TsSTmuW/JfLQalmWz0XJdpJgqZ1CCMxREiXc1rRqJMzF/cF3AULaPJ/AqFzL7u489R1+sjJslBbOtvE35ddnnw48Lu/yiV6jEqPzIurfgT2CLtgO3ZmnNISBku9q0msT1HxlHvo3dmdVaGqUEydheaY04500aDbMIJzRfAPd/x+S/itycShl7r9dhKHa+U+KLFw6RQmo694Gb0a4+WsaQ+WRk19b/kHWWDmQ==</MAC_KEY>
-     Response from device:   <MAC_LABEL>P_VOEGZH</MAC_LABEL>
-     Response from device:   <ENTRY_CODE>8654</ENTRY_CODE>
-     Response from device: </RESPONSE>
-     */
-
     private static void register(String[] args) {
-        final String host = args[0];
+       final String host = args[0];
 
-        Random generator = new Random();
+       Random generator = new Random();
         terminal.entryCode = String.valueOf(generator.nextInt(9999));
 
         System.out.println("Entry code " + terminal.entryCode);
@@ -124,8 +112,22 @@ public class Main {
                 "</TRANSACTION>";
 
         socketSend(host, PORT, registrationMessage);
+
+/**
+         response
+         Response from device: <RESPONSE>
+         Response from device:   <RESPONSE_TEXT>Registered P_VOEGZH</RESPONSE_TEXT>
+         Response from device:   <RESULT>OK</RESULT>
+         Response from device:   <RESULT_CODE>-1</RESULT_CODE>
+         Response from device:   <TERMINATION_STATUS>SUCCESS</TERMINATION_STATUS>
+         Response from device:   <MAC_KEY>bu2qchsiidv3zeNjAt9LC8kUd2KpBPgG9iANnBHLpmZmap0gyoJTqezVkatYNwKMj3BPlFuYGYwjyleRaHqe6HEZ2VAuKl/JoTVRcu57Wcq5ouEYi5TsSTmuW/JfLQalmWz0XJdpJgqZ1CCMxREiXc1rRqJMzF/cF3AULaPJ/AqFzL7u489R1+sjJslBbOtvE35ddnnw48Lu/yiV6jEqPzIurfgT2CLtgO3ZmnNISBku9q0msT1HxlHvo3dmdVaGqUEydheaY04500aDbMIJzRfAPd/x+S/itycShl7r9dhKHa+U+KLFw6RQmo694Gb0a4+WsaQ+WRk19b/kHWWDmQ==</MAC_KEY>
+         Response from device:   <MAC_LABEL>P_VOEGZH</MAC_LABEL>
+         Response from device:   <ENTRY_CODE>8654</ENTRY_CODE>
+         Response from device: </RESPONSE>
+ */
         terminal.setMacKey();
         terminal.setMacLabel();
+
         debug();
     }
 
