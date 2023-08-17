@@ -5,70 +5,93 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.net.*;
 import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Main {
-    static byte[] publicEncodedBytes;
-
     static final int PORT = 5015;
-
     static Counter counterInstance = new Counter();
-
-    static {
-        try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(2048);
-            KeyPair keypair = keyGen.genKeyPair();
-            publicEncodedBytes = keypair.getPublic().getEncoded();
-        } catch (Exception exception) {
-            System.out.println("Start failed: " + exception);
-        }
-
-    }
+    static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.2");
-//        register(args);
-        testMac(args);
+        System.out.println("App start version 1.0.3");
+        meni();
+
+        Scanner scanner = new Scanner(System.in);
+        int i = Integer.MAX_VALUE;
+        while ( i != 0) {
+            i = scanner.nextInt();
+            switch (i) {
+                case 1:
+                    register(args);
+                    break;
+                case 2:
+                    testMac(args);
+                    break;
+                case 3:
+                    unregister(args);
+                    break;
+                default:
+                    break;
+            }
+            meni();
+        }
+    }
+
+    private static void meni() {
+        System.out.println("Enter:");
+        System.out.println("    1 to register");
+        System.out.println("    2 to test mac");
+        System.out.println("    3 to unregiser");
+        System.out.println("    0 to close program");
+    }
+
+    private static void unregister(String[] args) {
+        String unregisterMessage = "<TRANSACTION>\n" +
+                "  <FUNCTION_TYPE>SECURITY</FUNCTION_TYPE>\n" +
+                "  <COMMAND>UNREGISTERALL</COMMAND>\n" +
+                "</TRANSACTION>";
+        socketSend(args[0], PORT, unregisterMessage);
+        debug();
     }
 
     private static void testMac(String[] args) {
         final String host = args[0];
-        final long counter = counterInstance.getNext();
-        System.out.println("next counter is " + counter);
+        terminal.counter = counterInstance.getNext();
 
-        byte[] counterMac;
         try {
-            byte[] macBytes = String.valueOf(counter).getBytes("UTF-8");
-            SecretKeySpec signingKey = new SecretKeySpec(getMacKey(), "AES");
+            byte[] macBytes = String.valueOf(terminal.counter).getBytes("UTF-8");
+            SecretKeySpec signingKey = new SecretKeySpec(Base64.getDecoder().decode(terminal.macKey), "AES");
             Mac mac = null;
             try {
                 mac = Mac.getInstance("HmacSHA256");
                 mac.init(signingKey);
-                counterMac = mac.doFinal(macBytes);
+                terminal.macCounter = mac.doFinal(macBytes);
             } catch (NoSuchAlgorithmException e) {
+                debug();
                 throw new RuntimeException(e);
             } catch (InvalidKeyException e) {
+                debug();
                 throw new RuntimeException(e);
             }
 
         } catch (UnsupportedEncodingException e) {
+            debug();
             throw new RuntimeException(e);
         }
 
         String macMessage = "<TRANSACTION>\n" +
                 "  <FUNCTION_TYPE>SECURITY</FUNCTION_TYPE>\n" +
                 "  <COMMAND>TEST_MAC</COMMAND>\n" +
-                "  <MAC_LABEL>P_VOEGZH</MAC_LABEL>\n" +
-                "  <MAC>"+counterMac+"</MAC>\n" +
-                "  <COUNTER>"+ counter +"</COUNTER>\n" + //TODO Min value:1 and Max value: 4294967295
+                "  <MAC_LABEL>"+terminal.macLabel+"</MAC_LABEL>\n" +
+                "  <MAC>"+terminal.macCounter+"</MAC>\n" +
+                "  <COUNTER>"+ terminal.counter +"</COUNTER>\n" + //TODO Min value:1 and Max value: 4294967295
                 "</TRANSACTION>";
 
         socketSend(host, PORT, macMessage);
+        debug();
     }
 
     /**
@@ -83,29 +106,27 @@ public class Main {
      Response from device:   <ENTRY_CODE>8654</ENTRY_CODE>
      Response from device: </RESPONSE>
      */
-    private static byte[] getMacKey() {
-        return Base64.getDecoder()
-                .decode("bu2qchsiidv3zeNjAt9LC8kUd2KpBPgG9iANnBHLpmZmap0gyoJTqezVkatYNwKMj3BPlFuYGYwjyleRaHqe6HEZ2VAuKl/JoTVRcu57Wcq5ouEYi5TsSTmuW/JfLQalmWz0XJdpJgqZ1CCMxREiXc1rRqJMzF/cF3AULaPJ/AqFzL7u489R1+sjJslBbOtvE35ddnnw48Lu/yiV6jEqPzIurfgT2CLtgO3ZmnNISBku9q0msT1HxlHvo3dmdVaGqUEydheaY04500aDbMIJzRfAPd/x+S/itycShl7r9dhKHa+U+KLFw6RQmo694Gb0a4+WsaQ+WRk19b/kHWWDmQ==".getBytes());
-    }
 
     private static void register(String[] args) {
         final String host = args[0];
 
         Random generator = new Random();
-        String entryCode = String.valueOf(generator.nextInt(9999));
+        terminal.entryCode = String.valueOf(generator.nextInt(9999));
 
-        System.out.println("Entry code " + entryCode);
-        String publicEncodedString = Base64.getEncoder().encodeToString(publicEncodedBytes);
+        System.out.println("Entry code " + terminal.entryCode);
 
         String registrationMessage = "<TRANSACTION>\n" +
                 "  <FUNCTION_TYPE>SECURITY</FUNCTION_TYPE>\n" +
                 "  <COMMAND>REGISTER</COMMAND>\n" +
-                "  <ENTRY_CODE>"+ entryCode +"</ENTRY_CODE>\n" +
-                "  <KEY>"+publicEncodedString+"</KEY>\n" +
+                "  <ENTRY_CODE>"+ terminal.entryCode +"</ENTRY_CODE>\n" +
+                "  <KEY>"+terminal.publicEncodedString+"</KEY>\n" +
                 "  <REG_VER>1</REG_VER>\n" +
                 "</TRANSACTION>";
 
         socketSend(host, PORT, registrationMessage);
+        terminal.setMacKey();
+        terminal.setMacLabel();
+        debug();
     }
 
     private static void socketSend(String host, int port, String message) {
@@ -117,13 +138,23 @@ public class Main {
             out.println(message);
 
             // Receive and process response
+            StringBuilder responseBuilder = new StringBuilder();
             String response;
             while ((response = in.readLine()) != null) {
                 System.out.println("Response from device: " + response);
                 // Process the response as needed
+                responseBuilder.append(response);
             }
+            terminal.lastResponse = responseBuilder.toString();
         } catch (IOException e) {
             e.printStackTrace();
+            debug();
         }
+    }
+
+    private static void debug() {
+        System.out.println("_________DEBUG INFO START_____________");
+        System.out.println(terminal);
+        System.out.println("_________DEBUG INFO END_____________");
     }
 }
