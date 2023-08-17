@@ -17,7 +17,7 @@ public class Main {
     static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.9");
+        System.out.println("App start version 1.0.10");
         unregister(args);
         try {
             TimeUnit.SECONDS.sleep(1);
