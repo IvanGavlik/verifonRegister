@@ -16,7 +16,7 @@ public class Main {
     static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.5");
+        System.out.println("App start version 1.0.6");
         meni();
 
         int i = Integer.MAX_VALUE;
@@ -63,7 +63,7 @@ public class Main {
 
         try {
             byte[] macBytes = String.valueOf(terminal.counter).getBytes("UTF-8");
-            SecretKeySpec signingKey = new SecretKeySpec(Base64.getDecoder().decode(terminal.macKey), "AES");
+            SecretKeySpec signingKey = new SecretKeySpec(terminal.macKey, "AES");
             Mac mac = null;
             try {
                 mac = Mac.getInstance("HmacSHA256");
