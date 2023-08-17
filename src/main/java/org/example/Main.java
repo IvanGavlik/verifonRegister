@@ -9,6 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
     static final int PORT = 5015;
@@ -16,19 +17,22 @@ public class Main {
     static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.8");
+        System.out.println("App start version 1.0.9");
         unregister(args);
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         register(args);
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         testMac(args);
     }
 
-    private static void meni() {
-        System.out.println("Enter:");
-        System.out.println("    1 to register");
-        System.out.println("    2 to test mac");
-        System.out.println("    3 to unregiser");
-        System.out.println("    0 to close program");
-    }
 
     private static void unregister(String[] args) {
         String unregisterMessage = "<TRANSACTION>\n" +
