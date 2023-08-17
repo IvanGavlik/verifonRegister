@@ -17,8 +17,8 @@ public class Main {
     static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.10");
-        unregister(args);
+        System.out.println("App start version 1.0.11");
+     //   unregister(args);
         try {
             TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
@@ -35,6 +35,7 @@ public class Main {
 
 
     private static void unregister(String[] args) {
+
         String unregisterMessage = "<TRANSACTION>\n" +
                 "  <FUNCTION_TYPE>SECURITY</FUNCTION_TYPE>\n" +
                 "  <COMMAND>UNREGISTERALL</COMMAND>\n" +
@@ -89,6 +90,10 @@ public class Main {
 
         System.out.println("Entry code " + terminal.entryCode);
 
+        System.out.println("press enter to continue");
+        Scanner sc = new Scanner(System.in);
+        String s = sc.nextLine();
+
         String registrationMessage = "<TRANSACTION>\n" +
                 "  <FUNCTION_TYPE>SECURITY</FUNCTION_TYPE>\n" +
                 "  <COMMAND>REGISTER</COMMAND>\n" +
@@ -120,7 +125,9 @@ public class Main {
     private static void socketSend(String host, int port, String message) {
         try (Socket socket = new Socket(host, port);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+             Scanner sc = new Scanner(new InputStreamReader(socket.getInputStream()))) {
+
+            ;
 
             // Send registration message
             out.println(message);
@@ -128,11 +135,15 @@ public class Main {
             // Receive and process response
             StringBuilder responseBuilder = new StringBuilder();
             String response;
-            while ((response = in.readLine()) != null) {
-                System.out.println("Response from device: " + response);
+            while (sc.hasNextLine()) {
+                String l = sc.nextLine();
+                System.out.println("Response from device: " + l);
                 // Process the response as needed
-                responseBuilder.append(response);
+                responseBuilder.append(l);
+                System.out.println("Response processing");
             }
+            System.out.println("Response end");
+            socket.close();
             terminal.lastResponse = responseBuilder.toString();
         } catch (IOException e) {
             e.printStackTrace();
