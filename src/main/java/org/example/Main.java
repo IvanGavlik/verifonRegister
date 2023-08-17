@@ -16,13 +16,14 @@ public class Main {
     static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.6");
+        System.out.println("App start version 1.0.7");
         meni();
 
         int i = Integer.MAX_VALUE;
         while ( i != 0) {
             Scanner scanner = new Scanner(System.in);
-            i = scanner.nextInt();
+            String s = scanner.nextLine();
+            i = Integer.valueOf(s);
             switch (i) {
                 case 1:
                     register(args);
