@@ -16,29 +16,10 @@ public class Main {
     static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.7");
-        meni();
-
-        int i = Integer.MAX_VALUE;
-        while ( i != 0) {
-            Scanner scanner = new Scanner(System.in);
-            String s = scanner.nextLine();
-            i = Integer.valueOf(s);
-            switch (i) {
-                case 1:
-                    register(args);
-                    break;
-                case 2:
-                    testMac(args);
-                    break;
-                case 3:
-                    unregister(args);
-                    break;
-                default:
-                    break;
-            }
-            meni();
-        }
+        System.out.println("App start version 1.0.8");
+        unregister(args);
+        register(args);
+        testMac(args);
     }
 
     private static void meni() {
