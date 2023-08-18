@@ -17,7 +17,7 @@ public class Main {
     static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.12");
+        System.out.println("App start version 1.0.14");
         unregister(args);
         try {
             TimeUnit.SECONDS.sleep(1);
@@ -89,10 +89,6 @@ public class Main {
         terminal.entryCode = String.valueOf(generator.nextInt(9999));
 
         System.out.println("Entry code " + terminal.entryCode);
-
-        System.out.println("press enter to continue");
-        Scanner sc = new Scanner(System.in);
-        String s = sc.nextLine();
 
         String registrationMessage = "<TRANSACTION>\n" +
                 "  <FUNCTION_TYPE>SECURITY</FUNCTION_TYPE>\n" +
