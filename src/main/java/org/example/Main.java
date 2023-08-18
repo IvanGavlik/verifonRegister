@@ -17,8 +17,8 @@ public class Main {
     static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.11");
-     //   unregister(args);
+        System.out.println("App start version 1.0.12");
+        unregister(args);
         try {
             TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
@@ -127,14 +127,11 @@ public class Main {
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              Scanner sc = new Scanner(new InputStreamReader(socket.getInputStream()))) {
 
-            ;
-
             // Send registration message
             out.println(message);
 
             // Receive and process response
             StringBuilder responseBuilder = new StringBuilder();
-            String response;
             while (sc.hasNextLine()) {
                 String l = sc.nextLine();
                 System.out.println("Response from device: " + l);
