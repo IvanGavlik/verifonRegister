@@ -4,12 +4,14 @@ import javax.crypto.Cipher;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.Base64;
 
 public class Terminal {
     static byte[] publicEncodedBytes;
     static PrivateKey privateKey;
+    static PublicKey publicKey;
 
     static {
         try {
@@ -17,6 +19,7 @@ public class Terminal {
             keyGen.initialize(2048);
             KeyPair keypair = keyGen.genKeyPair();
             publicEncodedBytes = keypair.getPublic().getEncoded();
+            publicKey = keypair.getPublic();
             privateKey = keypair.getPrivate();
         } catch (Exception exception) {
             System.out.println("Start failed: " + exception);
@@ -39,7 +42,7 @@ public class Terminal {
 
        try {
            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-           cipher.init(Cipher.DECRYPT_MODE, privateKey);
+           cipher.init(Cipher.DECRYPT_MODE, publicKey);
            macKey = cipher.doFinal(Base64.getDecoder().decode(
                    lastResponse.substring(start, end).replace("<MAC_KEY>", "").trim()
            ));
