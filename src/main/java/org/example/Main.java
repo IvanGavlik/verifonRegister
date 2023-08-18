@@ -17,7 +17,7 @@ public class Main {
     static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.16");
+        System.out.println("App start version 1.0.17");
         unregister(args);
         try {
             TimeUnit.SECONDS.sleep(1);
@@ -139,7 +139,6 @@ public class Main {
                 // Process the response as needed
                 responseBuilder.append(l);
                 if (l.contains("</RESPONSE>")) {
-                    sc.close();
                     socket.close();
                 }
                 System.out.println("Response processing");
