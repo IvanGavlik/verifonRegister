@@ -50,13 +50,14 @@ public class Terminal {
         macKey = cipher.doFinal(macKeyBase64Decoded);
 
         // test mac command
-        // convert counter to bytes
-        byte[] macBytes = String.valueOf(counter).getBytes("UTF-8"); // import AES 128 MAC_KEY and create HMAC object with SHA-256
-        SecretKeySpec signingKey = new SecretKeySpec(macKey, "AES");
-        Mac mac = Mac.getInstance("HmacSHA256");
-        mac.init(signingKey);
-        byte[] counterMac = mac.doFinal(macBytes);
-        this.macCounter = Base64.getEncoder().encode(counterMac);
+
+        SecretKeySpec secretKeySpec = new SecretKeySpec(macKey, "AES");
+
+        Cipher cipher2 = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher2.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+        byte[] counterBytes = String.valueOf(counter).getBytes("UTF-8");
+        byte[] encryptedBytes = cipher2.doFinal(counterBytes);
+        this.macCounter = Base64.getEncoder().encode(encryptedBytes);
     }
 
     public void setMacLabel() {
