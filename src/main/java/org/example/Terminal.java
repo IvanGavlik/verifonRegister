@@ -45,16 +45,16 @@ public class Terminal {
                 lastResponse.substring(start, end).replace("<MAC_KEY>", "").trim());
 
 
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding"); // RSA/ECB/PKCS1Padding
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         macKey = cipher.doFinal(macKeyBase64Decoded);
 
         // test mac command
 
-        SecretKeySpec secretKeySpec = new SecretKeySpec(macKey, "AES");
+//        SecretKeySpec secretKeySpec = new SecretKeySpec(macKey, "AES");
 
         Cipher cipher2 = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        cipher2.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+        cipher2.init(Cipher.ENCRYPT_MODE, privateKey);
         byte[] counterBytes = String.valueOf(counter).getBytes("UTF-8");
         byte[] encryptedBytes = cipher2.doFinal(counterBytes);
         this.macCounter = Base64.getEncoder().encode(encryptedBytes);
