@@ -133,7 +133,7 @@ public class Main {
                 System.out.println("Response from device: " + l);
                 // Process the response as needed
                 responseBuilder.append(l);
-                if (l.contains("</TRANSACTION>")) {
+                if (l.contains("</RESPONSE>")) {
                     sc.close();
                     socket.close();
                 }
