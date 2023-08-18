@@ -17,7 +17,7 @@ public class Main {
     static Terminal terminal = new Terminal();
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println("App start version 1.0.14");
+        System.out.println("App start version 1.0.16");
         unregister(args);
         try {
             TimeUnit.SECONDS.sleep(1);
@@ -47,6 +47,13 @@ public class Main {
     private static void testMac(String[] args) {
         final String host = args[0];
         terminal.counter = counterInstance.getNext();
+
+        try {
+            terminal.setMacKey();
+            terminal.setMacLabel();
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
 
         try {
             byte[] macBytes = String.valueOf(terminal.counter).getBytes("UTF-8");
@@ -112,8 +119,6 @@ public class Main {
          Response from device:   <ENTRY_CODE>8654</ENTRY_CODE>
          Response from device: </RESPONSE>
  */
-        terminal.setMacKey();
-        terminal.setMacLabel();
 
         debug();
     }
