@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
@@ -28,18 +29,28 @@ public class App {
         socketSend(HOST, PORT, unregisterRequest.get());
     }
     private RegisterResponse register() {
-        int entryCode = 1234;
-        byte[] key = {1};
+        int entryCode = new Random().nextInt((9999 - 1001) + 1) + 1001;
+        byte[] key = Security.INSTANCE.getPublicKeyEncoded();
         XMLRepresentation registerRequest = new RegisterRequest(entryCode, key);
         String response = socketSend(HOST, PORT, registerRequest.get());
         return new RegisterResponse(response);
     }
 
     private TestMacResponse testMac(RegisterResponse registerResponse) {
-        // TODO MAC KEY
-        XMLRepresentation testMac = new TestMacRequest(registerResponse.getMacLabel(), "", counterInstance.getNext());
-        String response = socketSend(HOST, PORT, testMac.get());
-        return new TestMacResponse(response);
+        try {
+            final long counterNext = counterInstance.getNext();
+
+            byte[] aes128Key = Security.INSTANCE
+                    .decodeAndDecrypt(registerResponse.getMacKey().getBytes());
+            byte[] mac = Security.INSTANCE
+                    .aes128AndEncode(aes128Key, String.valueOf(counterNext).getBytes());
+
+            XMLRepresentation testMac = new TestMacRequest(registerResponse.getMacLabel(), mac, counterNext);
+            String response = socketSend(HOST, PORT, testMac.get());
+            return new TestMacResponse(response);
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
     }
     private static String socketSend(String host, int port, String message) {
         try (Socket socket = new Socket(host, port);
@@ -117,11 +128,10 @@ class TestMacRequest implements XMLRepresentation {
     private final String type = "SECURITY";
     private final String command = "TEST_MAC";
     private final String macLabel;
-    private final String mac;
-
+    private final byte[] mac;
     private final long counter;
 
-    public TestMacRequest(final String macLabel, final String mac, final long counter) {
+    public TestMacRequest(final String macLabel, final byte[] mac, final long counter) {
         this.macLabel = macLabel;
         this.mac = mac;
         this.counter = counter;
