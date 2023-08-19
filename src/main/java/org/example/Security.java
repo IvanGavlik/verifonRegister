@@ -34,13 +34,13 @@ public class Security {
         }
     }
 
-    public byte[] aes128AndEncode(byte[] aes128Key, byte[] value) {
+    public String aes128AndEncode(byte[] aes128Key, byte[] value) {
         try {
             SecretKey macKey = new SecretKeySpec(aes128Key, "AES");
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, macKey);
-            byte[] mac = cipher.doFinal(String.valueOf(value).getBytes());
-            return mac;
+            byte[] mac = cipher.doFinal(value);
+            return Base64.getEncoder().encodeToString(mac);
         } catch (Exception exception) {
             throw new RuntimeException(exception);
         }

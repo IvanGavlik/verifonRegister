@@ -49,11 +49,10 @@ public class App {
 
             byte[] aes128Key = Security.INSTANCE
                     .decodeAndDecrypt(registerResponse.getMacKey().getBytes()); // TODO should this be string
-            byte[] mac = Security.INSTANCE
-                    .aes128AndEncode(aes128Key, ByteBuffer.allocate(4).putInt(counterNext).array()); //is it next or current
+            String mac = Security.INSTANCE
+                    .aes128AndEncode(aes128Key, ByteBuffer.allocate(4).putInt(counterNext).array()); // TODO - CALCULATE BYTES AND is it next or current
 
-            XMLRepresentation testMac = new TestMacRequest(registerResponse.getMacLabel(),
-                    Base64.getEncoder().encodeToString(mac),
+            XMLRepresentation testMac = new TestMacRequest(registerResponse.getMacLabel(), mac,
                     counterNext);
             String response = socketSend(HOST, PORT, testMac.get());
             return new TestMacResponse(response);
