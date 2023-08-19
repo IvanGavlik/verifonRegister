@@ -19,8 +19,8 @@ public class Security {
             throw new RuntimeException();
         }
     }
-    public byte[] getPublicKeyEncoded() {
-        return Base64.getEncoder().encode(this.keyPair.getPublic().getEncoded());
+    public String getPublicKeyEncoded() {
+        return Base64.getEncoder().encodeToString(this.keyPair.getPublic().getEncoded());
     }
 
     public byte[] decodeAndDecrypt(byte[] value) {

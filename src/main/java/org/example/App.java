@@ -36,7 +36,7 @@ public class App {
     }
     private RegisterResponse register() {
         int entryCode = new Random().nextInt((9999 - 1001) + 1) + 1001;
-        byte[] key = Security.INSTANCE.getPublicKeyEncoded();
+        String key = Security.INSTANCE.getPublicKeyEncoded();
         XMLRepresentation registerRequest = new RegisterRequest(entryCode, key);
         String response = socketSend(HOST, PORT, registerRequest.get());
         return new RegisterResponse(response);
@@ -51,7 +51,9 @@ public class App {
             byte[] mac = Security.INSTANCE
                     .aes128AndEncode(aes128Key, String.valueOf(counterNext).getBytes());
 
-            XMLRepresentation testMac = new TestMacRequest(registerResponse.getMacLabel(), mac, counterNext);
+            XMLRepresentation testMac = new TestMacRequest(registerResponse.getMacLabel(),
+                    Base64.getEncoder().encodeToString(mac),
+                    counterNext);
             String response = socketSend(HOST, PORT, testMac.get());
             return new TestMacResponse(response);
         } catch (Exception exception) {
@@ -112,9 +114,9 @@ class RegisterRequest implements XMLRepresentation {
 
     private final int regVersion = 1;
 
-    public RegisterRequest(final int entryCode, final byte[] key) {
+    public RegisterRequest(final int entryCode, String key) {
         this.entryCode = entryCode;
-        this.key = Base64.getEncoder().encodeToString(key); // TODO mozda ne trebam dvaput
+        this.key = key;
     }
 
     @Override
@@ -137,9 +139,9 @@ class TestMacRequest implements XMLRepresentation {
     private final String mac; // TODO TWICE STRING BYTE ECNODE
     private final long counter;
 
-    public TestMacRequest(final String macLabel, final byte[] mac, final long counter) {
+    public TestMacRequest(final String macLabel, String mac, final long counter) {
         this.macLabel = macLabel;
-        this.mac = Base64.getEncoder().encodeToString(mac);
+        this.mac = mac;
         this.counter = counter;
     }
     @Override
