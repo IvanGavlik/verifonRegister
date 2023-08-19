@@ -4,11 +4,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Base64;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
 public class App {
+
+    /**
+     * might send String instead of bytes
+     * @param args
+     */
     public static void main(String[] args) {
         App app = new App(args[0]);
         app.unregister();
@@ -102,13 +108,13 @@ class RegisterRequest implements XMLRepresentation {
 
     private final int entryCode;
 
-    private final byte[] key;
+    private final String key;
 
     private final int regVersion = 1;
 
     public RegisterRequest(final int entryCode, final byte[] key) {
         this.entryCode = entryCode;
-        this.key = key;
+        this.key = Base64.getEncoder().encodeToString(key); // TODO mozda ne trebam dvaput
     }
 
     @Override
@@ -128,12 +134,12 @@ class TestMacRequest implements XMLRepresentation {
     private final String type = "SECURITY";
     private final String command = "TEST_MAC";
     private final String macLabel;
-    private final byte[] mac;
+    private final String mac; // TODO TWICE STRING BYTE ECNODE
     private final long counter;
 
     public TestMacRequest(final String macLabel, final byte[] mac, final long counter) {
         this.macLabel = macLabel;
-        this.mac = mac;
+        this.mac = Base64.getEncoder().encodeToString(mac);
         this.counter = counter;
     }
     @Override
@@ -166,7 +172,7 @@ class RegisterResponse extends XMLResponse {
     private String result;
     private String resultCode;
     private String terminationStatus;
-    private String macKey;
+    private String macKey; // TODO da li je bites
     private String macLabel;
     private String entryCode;
 
