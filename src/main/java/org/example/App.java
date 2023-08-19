@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.Random;
 import java.util.Scanner;
@@ -44,12 +45,12 @@ public class App {
 
     private TestMacResponse testMac(RegisterResponse registerResponse) {
         try {
-            final long counterNext = counterInstance.getNext();
+            final int counterNext = (int) counterInstance.getNext();
 
             byte[] aes128Key = Security.INSTANCE
-                    .decodeAndDecrypt(registerResponse.getMacKey().getBytes());
+                    .decodeAndDecrypt(registerResponse.getMacKey().getBytes()); // TODO should this be string
             byte[] mac = Security.INSTANCE
-                    .aes128AndEncode(aes128Key, String.valueOf(counterNext).getBytes());
+                    .aes128AndEncode(aes128Key, ByteBuffer.allocate(4).putInt(counterNext).array()); //is it next or current
 
             XMLRepresentation testMac = new TestMacRequest(registerResponse.getMacLabel(),
                     Base64.getEncoder().encodeToString(mac),
