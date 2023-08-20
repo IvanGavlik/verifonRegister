@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.Base64;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.function.Supplier;
@@ -50,7 +49,7 @@ public class App {
             byte[] aes128Key = Security.INSTANCE
                     .decodeAndDecrypt(registerResponse.getMacKey().getBytes()); // TODO should this be string
             String mac = Security.INSTANCE
-                    .aes128AndEncode(aes128Key, ByteBuffer.allocate(4).putInt(counterNext).array()); // TODO - CALCULATE BYTES AND is it next or current
+                    .aes128AndEncode(aes128Key, String.valueOf(counterNext).getBytes()); // TODO - CALCULATE BYTES AND is it next or current
 
             XMLRepresentation testMac = new TestMacRequest(registerResponse.getMacLabel(), mac,
                     counterNext);

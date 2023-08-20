@@ -1,6 +1,7 @@
 package org.example;
 
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.KeyPair;
@@ -25,7 +26,7 @@ public class Security {
 
     public byte[] decodeAndDecrypt(byte[] value) {
         try {
-            Cipher cipher = Cipher.getInstance("RSA");
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.DECRYPT_MODE, this.keyPair.getPrivate());
             byte[] decoded = Base64.getDecoder().decode(value);
             return cipher.doFinal(decoded);
@@ -36,10 +37,10 @@ public class Security {
 
     public String aes128AndEncode(byte[] aes128Key, byte[] value) {
         try {
-            SecretKey macKey = new SecretKeySpec(aes128Key, "AES");
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, macKey);
-            byte[] mac = cipher.doFinal(value);
+            SecretKeySpec signingKey = new SecretKeySpec(aes128Key, "AES");
+            Mac hmac = Mac.getInstance("HmacSHA256");
+            hmac.init(signingKey);
+            byte[] mac = hmac.doFinal(value);
             return Base64.getEncoder().encodeToString(mac);
         } catch (Exception exception) {
             throw new RuntimeException(exception);
