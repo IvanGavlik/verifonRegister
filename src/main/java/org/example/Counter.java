@@ -12,10 +12,11 @@ public class Counter {
         file = new File(FILE_NAME);
     }
     public long getNext() {
-        long counter = readFromFile();
-        counter += 1;
-        saveToFile(String.valueOf(counter));
-        return counter;
+      //  long counter = readFromFile();
+      //  counter += 1;
+      //  saveToFile(String.valueOf(counter));
+      //  return counter;
+        return 1;
     }
     private long readFromFile() {
         try {
